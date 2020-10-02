@@ -11,6 +11,9 @@ NR_LOGGED_USERS = 0
 
 
 def follow(thefile):
+    # The actual function that simulates "tail -f"
+    # in unix. Returns the last written line
+
     thefile.seek(0, 2)
 
     while True:
@@ -22,6 +25,9 @@ def follow(thefile):
 
 
 def add_user(raw_line):
+    # This function adds a new user to the list of users
+    # it parses the line and fetches the user name
+
     global CURRENT_LOGGED_USERS
     global NR_LOGGED_USERS
 
@@ -39,6 +45,10 @@ def add_user(raw_line):
 
 
 def remove_user(raw_line):
+    # This function removes a user from the list of users
+    # it parses the line and fetches the user name to
+    # be removed
+
     global CURRENT_LOGGED_USERS
     global NR_LOGGED_USERS
     user = process_line_out(raw_line)
@@ -57,6 +67,9 @@ def remove_user(raw_line):
 
 
 def update_html(_nr_logged_users, _current_logged_users):
+    # Prints the list of users and their number results to an html
+    # which will autorefresh every 3 seconds
+
     user_list_str = '\n'.join(_current_logged_users)
 
     header = '''<html>
@@ -75,23 +88,33 @@ def update_html(_nr_logged_users, _current_logged_users):
 
 
 def process_line_in(raw_line):
+    # Finds the strings in which the user name is between
+    # Strips user name from it
+
     index_start = raw_line.find('usrName')
     index_end = raw_line.find("attackStatus")
     return raw_line[index_start + 8:index_end].strip()
 
 
 def process_line_out(raw_line):
+    # Finds the strings in which the user name is between
+    # Strips user name from it
+
     index_start = raw_line.find('usrName')
     index_end = raw_line.find("ifdir")
     return raw_line[index_start + 8:index_end].strip()
 
 
 if __name__ == '__main__':
+
+    # The main, opens file and tails it every time a keyword is found
+    # adds/removes an user
+
     logfile = open("x.log", "r")
     loglines = follow(logfile)
 
     # clean up html on start
-    # update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
+    update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
 
     for line in loglines:
         if FIND_ME_IN in line:
