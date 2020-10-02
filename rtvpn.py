@@ -1,5 +1,4 @@
 import time
-import re
 
 find_me_in = "Log In"
 find_me_out = "Log Out"
@@ -82,6 +81,7 @@ def process_line_out(raw_line):
     index_start =  raw_line.find('usrName')
     index_end = raw_line.find("ifdir")
     return raw_line[index_start+8:index_end].strip()
+
 
 if __name__ == '__main__':
     logfile = open("x.log","r")
