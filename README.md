@@ -1,6 +1,4 @@
-# rtfile
-Stands for RealTimeFile
-
-It's a generic python skeleton that keeps constantly reading from updating file and printing items found on updated lines. 
+# whoisinvpn 
+Parses FW logs real time and checks nr of logged VPN users.
 
 Outputs a self refreshing HTML showing the results.
