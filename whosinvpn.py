@@ -122,11 +122,14 @@ if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument('-f', '--file', help='Log File path', required=True)
+    parser.add_argument('-out', '--output', help='Html file out path')
     args = vars(parser.parse_args())
 
     # set arguments to variables
     if args['file']:
         my_log_file_path = args['file']
+    if args['output']:
+        HTML_FILE_NAME = args['output']
 
     # Init variables
     time_now = datetime.now()
@@ -136,7 +139,7 @@ if __name__ == '__main__':
     try:
         logfile = open(my_log_file_path)
     except IOError:
-        print(IOError)
+        print("File ", my_log_file_path, " not found exiting...")
         sys.exit()
 
     loglines = follow(logfile)
