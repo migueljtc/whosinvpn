@@ -115,7 +115,6 @@ def process_line_out(raw_line):
 
 
 if __name__ == '__main__':
-
     # The main, opens file and tails it every time a keyword is found
     # adds/removes an user
 
@@ -142,11 +141,13 @@ if __name__ == '__main__':
         print("File ", my_log_file_path, " not found exiting...")
         sys.exit()
 
+    # Follow the file
     loglines = follow(logfile)
 
     # clean up html on start
     update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
 
+    # The actual file parsing
     for line in loglines:
         if FIND_ME_IN in line:
             # print (line)
