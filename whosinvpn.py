@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 FIND_ME_IN = "Log In"
 FIND_ME_OUT = "Log Out"
@@ -8,6 +9,7 @@ HTML_FILE_NAME = "index.html"
 
 CURRENT_LOGGED_USERS = []
 NR_LOGGED_USERS = 0
+START_UP_TIME =""
 
 
 def follow(thefile):
@@ -69,6 +71,12 @@ def remove_user(raw_line):
 def update_html(_nr_logged_users, _current_logged_users):
     # Prints the list of users and their number results to an html
     # which will autorefresh every 3 seconds
+    # Set the time of the update as well as the startup of program
+
+    global START_UP_TIME
+
+    now = datetime.now()
+    t_now = now.strftime("%m/%d/%Y, %H:%M:%S")
 
     user_list_str = '\n'.join(_current_logged_users)
 
@@ -78,10 +86,10 @@ def update_html(_nr_logged_users, _current_logged_users):
   <meta http-equiv="refresh" content="3"
   </head>
   <body>
-  <h2>VPN Users Online : {}</h2>
+  <h2>VPN Users Online : {}</h2> <h3>Time: {} </h3><h5> Online since: {}</h5>
   <h5> {} </h5>
   </body>
-  </html>'''.format(_nr_logged_users, user_list_str)
+  </html>'''.format(_nr_logged_users, t_now, START_UP_TIME, user_list_str)
 
     with open(HTML_FILE_NAME, 'w') as out:
         out.write(header + '\n')
@@ -109,6 +117,10 @@ if __name__ == '__main__':
 
     # The main, opens file and tails it every time a keyword is found
     # adds/removes an user
+
+    # Init variables
+    time_now = datetime.now()
+    START_UP_TIME = time_now.strftime("%m/%d/%Y, %H:%M:%S")
 
     logfile = open("x.log", "r")
     loglines = follow(logfile)
