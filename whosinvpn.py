@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 import argparse
 import sys
+import logging
 
 FIND_ME_IN = "Log In"
 FIND_ME_OUT = "Log Out"
@@ -10,7 +11,7 @@ HTML_FILE_NAME = "index.html"
 CURRENT_LOGGED_USERS = []
 NR_LOGGED_USERS = 0
 START_UP_TIME = ""
-
+LOG_FILE = "whosinvpn.csv"
 
 def follow(thefile):
     # The actual function that simulates "tail -f"
@@ -121,7 +122,8 @@ if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument('-f', '--file', help='Log File path', required=True)
-    parser.add_argument('-out', '--output', help='Html file out path')
+    parser.add_argument('-out', '--output', help='Html output file path')
+    parser.add_argument('-log', '--logfile', help='Log file  path')
     args = vars(parser.parse_args())
 
     # set arguments to variables
@@ -129,6 +131,15 @@ if __name__ == '__main__':
         my_log_file_path = args['file']
     if args['output']:
         HTML_FILE_NAME = args['output']
+    if args['logfile']:
+        LOG_FILE = args['logfile']
+    
+    print(LOG_FILE)
+
+    # Initiate logging
+    logging.basicConfig(
+        filename=LOG_FILE, filemode='w',
+        format='%(asctime)s - %(message)s')
 
     # Init variables
     time_now = datetime.now()
