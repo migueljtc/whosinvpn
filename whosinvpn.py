@@ -46,6 +46,7 @@ def add_user(raw_line):
         print("Added user: " + user)
         logging.info('Added user: %(user)')
 
+    logging.info('Active Users: %(str(NR_LOGGED_USERS))')
     print("Active users: " + str(NR_LOGGED_USERS))
 
 
@@ -69,6 +70,7 @@ def remove_user(raw_line):
             print("Removed user: " + user)
             logging.info('Removed user: %(user)')
 
+    logging.info('Active Users: %(str(NR_LOGGED_USERS))')
     print("Active users: " + str(NR_LOGGED_USERS))
 
 
