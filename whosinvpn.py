@@ -13,6 +13,7 @@ NR_LOGGED_USERS = 0
 START_UP_TIME = ""
 LOG_FILE = "whosinvpn.csv"
 
+
 def follow(thefile):
     # The actual function that simulates "tail -f"
     # in unix. Returns the last written line
@@ -43,6 +44,7 @@ def add_user(raw_line):
         NR_LOGGED_USERS = NR_LOGGED_USERS + 1
         update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
         print("Added user: " + user)
+        logging.info('Added user: %', user)
 
     print("Active users: " + str(NR_LOGGED_USERS))
 
@@ -65,6 +67,7 @@ def remove_user(raw_line):
             NR_LOGGED_USERS = NR_LOGGED_USERS - 1
             update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
             print("Removed user: " + user)
+            logging.info('Removed user: %', user)
 
     print("Active users: " + str(NR_LOGGED_USERS))
 
@@ -77,7 +80,7 @@ def update_html(_nr_logged_users, _current_logged_users):
     global START_UP_TIME
 
     now = datetime.now()
-    t_now = now.strftime("%m/%d/%Y, %H:%M:%S")
+    t_now = now.strftime("%d/%m/%Y, %H:%M:%S")
 
     user_list_str = '\n'.join(_current_logged_users)
 
@@ -133,17 +136,18 @@ if __name__ == '__main__':
         HTML_FILE_NAME = args['output']
     if args['logfile']:
         LOG_FILE = args['logfile']
-    
-    print(LOG_FILE)
 
     # Initiate logging
     logging.basicConfig(
-        filename=LOG_FILE, filemode='w',
-        format='%(asctime)s - %(message)s')
+        filename=LOG_FILE, filemode='a',
+        format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',
+        level=logging.INFO)
+
+    logging.info('--- WhosInVpn Started ---')
 
     # Init variables
     time_now = datetime.now()
-    START_UP_TIME = time_now.strftime("%m/%d/%Y, %H:%M:%S")
+    START_UP_TIME = time_now.strftime("%d/%m/%Y, %H:%M:%S")
 
     # Open the log file
     try:
