@@ -44,7 +44,8 @@ def add_user(raw_line):
         NR_LOGGED_USERS = NR_LOGGED_USERS + 1
         update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
         print("Added user: " + user)
-        logging.info('Added user: %(user)')
+        logging.info('Added user: %s', user)
+        logging.info('Active Users: %s', str(NR_LOGGED_USERS))
 
     print("Active users: " + str(NR_LOGGED_USERS))
 
@@ -67,7 +68,8 @@ def remove_user(raw_line):
             NR_LOGGED_USERS = NR_LOGGED_USERS - 1
             update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
             print("Removed user: " + user)
-            logging.info('Removed user: %(user)')
+            logging.info('Removed user: %s', user)
+            logging.info('Active Users: %s', str(NR_LOGGED_USERS))
 
     print("Active users: " + str(NR_LOGGED_USERS))
 
