@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 import argparse
 import sys
+import logging
 
 FIND_ME_IN = "Log In"
 FIND_ME_OUT = "Log Out"
@@ -10,6 +11,7 @@ HTML_FILE_NAME = "index.html"
 CURRENT_LOGGED_USERS = []
 NR_LOGGED_USERS = 0
 START_UP_TIME = ""
+LOG_FILE = "whosinvpn.csv"
 
 
 def follow(thefile):
@@ -42,6 +44,7 @@ def add_user(raw_line):
         NR_LOGGED_USERS = NR_LOGGED_USERS + 1
         update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
         print("Added user: " + user)
+        logging.info('Added user: %', user)
 
     print("Active users: " + str(NR_LOGGED_USERS))
 
@@ -64,6 +67,7 @@ def remove_user(raw_line):
             NR_LOGGED_USERS = NR_LOGGED_USERS - 1
             update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
             print("Removed user: " + user)
+            logging.info('Removed user: %', user)
 
     print("Active users: " + str(NR_LOGGED_USERS))
 
@@ -76,7 +80,7 @@ def update_html(_nr_logged_users, _current_logged_users):
     global START_UP_TIME
 
     now = datetime.now()
-    t_now = now.strftime("%m/%d/%Y, %H:%M:%S")
+    t_now = now.strftime("%d/%m/%Y, %H:%M:%S")
 
     user_list_str = '\n'.join(_current_logged_users)
 
@@ -121,7 +125,8 @@ if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument('-f', '--file', help='Log File path', required=True)
-    parser.add_argument('-out', '--output', help='Html file out path')
+    parser.add_argument('-out', '--output', help='Html output file path')
+    parser.add_argument('-log', '--logfile', help='Log file  path')
     args = vars(parser.parse_args())
 
     # set arguments to variables
@@ -129,10 +134,20 @@ if __name__ == '__main__':
         my_log_file_path = args['file']
     if args['output']:
         HTML_FILE_NAME = args['output']
+    if args['logfile']:
+        LOG_FILE = args['logfile']
+
+    # Initiate logging
+    logging.basicConfig(
+        filename=LOG_FILE, filemode='a',
+        format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',
+        level=logging.INFO)
+
+    logging.info('--- WhosInVpn Started ---')
 
     # Init variables
     time_now = datetime.now()
-    START_UP_TIME = time_now.strftime("%m/%d/%Y, %H:%M:%S")
+    START_UP_TIME = time_now.strftime("%d/%m/%Y, %H:%M:%S")
 
     # Open the log file
     try:
