@@ -87,7 +87,8 @@ def update_html(_nr_logged_users, _current_logged_users):
     header = '''<html>
   <head>
   <title>VPN Users Online: </title>
-  <meta http-equiv="refresh" content="3"
+  <meta http-equiv="refresh" content="3">
+  <link rel="stylesheet" href="wvpn.css">
   </head>
   <body>
   <h2>VPN Users Online : {}</h2> <h3> Last Refresh: {}
@@ -128,7 +129,7 @@ def create_html_table(user_list_str):
 
     table = "<table>\n"
     # Create the table's column headers
-    header = ["User"]
+    header = ["Users Connected"]
     table += "  <tr>\n"
     for column in header:
         table += "    <th>{0}</th>\n".format(column.strip())
