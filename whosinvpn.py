@@ -84,8 +84,6 @@ def update_html(_nr_logged_users, _current_logged_users):
     now = datetime.now()
     t_now = now.strftime("%d/%m/%Y, %H:%M:%S")
 
-    user_list_str = '\n'.join(_current_logged_users)
-
     header = '''<html>
   <head>
   <title>VPN Users Online: </title>
@@ -93,10 +91,13 @@ def update_html(_nr_logged_users, _current_logged_users):
   </head>
   <body>
   <h2>VPN Users Online : {}</h2> <h3> Last Refresh: {}
-  </h3><h5> Online since: {}</h5>
+  </h3>
   <h5> {} </h5>
   </body>
-  </html>'''.format(_nr_logged_users, t_now, START_UP_TIME, user_list_str)
+  <footer> <h5> Online since: {}</h5> </footer>
+  </html>'''.format(_nr_logged_users, t_now,
+            create_html_table(
+                _current_logged_users), START_UP_TIME)
 
     with open(HTML_FILE_NAME, 'w') as out:
         out.write(header + '\n')
@@ -118,6 +119,31 @@ def process_line_out(raw_line):
     index_start = raw_line.find('usrName')
     index_end = raw_line.find("ifdir")
     return raw_line[index_start + 8:index_end].strip()
+
+
+def create_html_table(user_list_str):
+    # This function creates a HTML table
+    # with the logged in users and returns a string
+    # with the result
+
+    table = "<table>\n"
+    # Create the table's column headers
+    header = ["User"]
+    table += "  <tr>\n"
+    for column in header:
+        table += "    <th>{0}</th>\n".format(column.strip())
+    table += "  </tr>\n"
+
+    # Create the table's row data
+    for _user in user_list_str:
+        row = _user.split(",")
+        table += "  <tr>\n"
+        for column in row:
+            table += "    <td>{0}</td>\n".format(column.strip())
+        table += "  </tr>\n"
+    table += "</table>"
+
+    return table
 
 
 if __name__ == '__main__':
