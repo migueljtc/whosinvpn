@@ -5,4 +5,4 @@
 
 This script parses Checkpoint Firewall logs in real time processes the VPN users logged in.
 
-Outputs a self refreshing HTML showing the current number of logged in users and their username.
+Outputs a self refreshing HTML showing the current number of logged in users and their username and login date/time
