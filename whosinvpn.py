@@ -8,8 +8,7 @@ FIND_ME_IN = "Log In"
 FIND_ME_OUT = "Log Out"
 USR_NAME_STRING = "usrName"
 HTML_FILE_NAME = "index.html"
-CURRENT_LOGGED_USERS = []
-NR_LOGGED_USERS = 0
+CURRENT_LOGGED_USERS = {}
 START_UP_TIME = ""
 LOG_FILE = "whosinvpn.csv"
 
@@ -33,21 +32,24 @@ def add_user(raw_line):
     # it parses the line and fetches the user name
 
     global CURRENT_LOGGED_USERS
-    global NR_LOGGED_USERS
 
     user = process_line_in(raw_line)
     print("add: Processing user: " + user)
 
     # make sure not to add the same user twice
     if user not in CURRENT_LOGGED_USERS:
-        CURRENT_LOGGED_USERS.append(user)
-        NR_LOGGED_USERS = NR_LOGGED_USERS + 1
-        update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
+        # get the time/date user connected
+        _time_now = datetime.now()
+        login_time = _time_now.strftime("%d/%m/%Y, %H:%M:%S")
+
+        # add user and connection date to dict
+        CURRENT_LOGGED_USERS[user] = login_time
+        update_html(CURRENT_LOGGED_USERS)
         print("Added user: " + user)
         logging.info('Added user: %s', user)
-        logging.info('Active Users: %s', str(NR_LOGGED_USERS))
+        logging.info('Active Users: %s', str(len(CURRENT_LOGGED_USERS)))
 
-    print("Active users: " + str(NR_LOGGED_USERS))
+    print("Active users: " + str(len(CURRENT_LOGGED_USERS)))
 
 
 def remove_user(raw_line):
@@ -56,25 +58,21 @@ def remove_user(raw_line):
     # be removed
 
     global CURRENT_LOGGED_USERS
-    global NR_LOGGED_USERS
     user = process_line_out(raw_line)
     print("remove: Processing user: " + user)
 
     # avoid removing non-existant elements
     if user in CURRENT_LOGGED_USERS:
-        CURRENT_LOGGED_USERS.remove(user)
-        # make sure it's allways >=0 or removed users that don't exist yet
-        if NR_LOGGED_USERS > 0:
-            NR_LOGGED_USERS = NR_LOGGED_USERS - 1
-            update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
-            print("Removed user: " + user)
-            logging.info('Removed user: %s', user)
-            logging.info('Active Users: %s', str(NR_LOGGED_USERS))
+        del CURRENT_LOGGED_USERS[user]
+        update_html(CURRENT_LOGGED_USERS)
+        print("Removed user: " + user)
+        logging.info('Removed user: %s', user)
+        logging.info('Active Users: %s', str(len(CURRENT_LOGGED_USERS)))
 
-    print("Active users: " + str(NR_LOGGED_USERS))
+    print("Active users: " + str(len(CURRENT_LOGGED_USERS)))
 
 
-def update_html(_nr_logged_users, _current_logged_users):
+def update_html(_current_logged_users):
     # Prints the list of users and their number results to an html
     # which will autorefresh every 3 seconds
     # Set the time of the update as well as the startup of program
@@ -96,7 +94,7 @@ def update_html(_nr_logged_users, _current_logged_users):
   <h5> {} </h5>
   </body>
   <footer> <h5> Online since: {}</h5> </footer>
-  </html>'''.format(_nr_logged_users, t_now,
+  </html>'''.format(len(_current_logged_users), t_now,
             create_html_table(
                 _current_logged_users), START_UP_TIME)
 
@@ -122,25 +120,25 @@ def process_line_out(raw_line):
     return raw_line[index_start + 8:index_end].strip()
 
 
-def create_html_table(user_list_str):
+def create_html_table(user_list_dic):
     # This function creates a HTML table
     # with the logged in users and returns a string
     # with the result
 
     table = "<table>\n"
     # Create the table's column headers
-    header = ["Users Connected"]
+    header = ["Users Connected", "Login Time"]
     table += "  <tr>\n"
     for column in header:
         table += "    <th>{0}</th>\n".format(column.strip())
     table += "  </tr>\n"
 
     # Create the table's row data
-    for _user in user_list_str:
-        row = _user.split(",")
+    for _user in user_list_dic:
+        row = [_user, user_list_dic[_user]]
         table += "  <tr>\n"
         for column in row:
-            table += "    <td>{0}</td>\n".format(column.strip())
+            table += "    <td>{0}</td>\n".format(column)
         table += "  </tr>\n"
     table += "</table>"
 
@@ -189,7 +187,7 @@ if __name__ == '__main__':
     loglines = follow(logfile)
 
     # clean up html on start
-    update_html(NR_LOGGED_USERS, CURRENT_LOGGED_USERS)
+    update_html(CURRENT_LOGGED_USERS)
 
     # The actual file parsing
     for line in loglines:
